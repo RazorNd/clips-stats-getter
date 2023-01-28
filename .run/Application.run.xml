@@ -1,0 +1,26 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <additionalParameters>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.r2dbc.url" />
+        <option name="value" value="r2dbc:postgresql://localhost:10227/twitch" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.r2dbc.username" />
+        <option name="value" value="twitch" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.r2dbc.password" />
+        <option name="value" value="twitch" />
+      </param>
+    </additionalParameters>
+    <module name="clips-stats-getter.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ru.razornd.twitch.clips.Application" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

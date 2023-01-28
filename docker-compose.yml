@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: twitch
+      POSTGRES_DB: twitch
+      POSTGRES_PASSWORD: twitch
+    ports:
+      - '10227:5432'
