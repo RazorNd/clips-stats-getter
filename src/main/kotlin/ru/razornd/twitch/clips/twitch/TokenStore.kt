@@ -15,24 +15,13 @@
  *
  */
 
-package ru.razornd.twitch.clips
+package ru.razornd.twitch.clips.twitch
 
-import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
-import org.testcontainers.junit.jupiter.Testcontainers
+import ru.razornd.twitch.clips.twitch.AuthorizationManager.AuthorizationToken
 
-@SpringBootTest(
-    properties = [
-        "spring.r2dbc.url=r2dbc:tc:postgresql:///twitch?TC_IMAGE_TAG=14-alpine",
-        "twitch.client-id=none",
-        "twitch.secret=none"
-    ]
-)
-@Testcontainers(disabledWithoutDocker = true)
-class ApplicationTests {
+interface TokenStore {
+    suspend fun getCurrentToken(): AuthorizationToken?
 
-    @Test
-    fun contextLoads() {
-    }
+    suspend fun storeToken(expected: AuthorizationToken)
 
 }

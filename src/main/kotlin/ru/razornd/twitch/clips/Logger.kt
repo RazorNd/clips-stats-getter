@@ -17,22 +17,7 @@
 
 package ru.razornd.twitch.clips
 
-import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
-import org.testcontainers.junit.jupiter.Testcontainers
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-@SpringBootTest(
-    properties = [
-        "spring.r2dbc.url=r2dbc:tc:postgresql:///twitch?TC_IMAGE_TAG=14-alpine",
-        "twitch.client-id=none",
-        "twitch.secret=none"
-    ]
-)
-@Testcontainers(disabledWithoutDocker = true)
-class ApplicationTests {
-
-    @Test
-    fun contextLoads() {
-    }
-
-}
+inline fun <reified T> logger(): Logger = LoggerFactory.getLogger(T::class.java)

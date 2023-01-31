@@ -15,24 +15,17 @@
  *
  */
 
-package ru.razornd.twitch.clips
+package ru.razornd.twitch.clips.configuration
 
-import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
-import org.testcontainers.junit.jupiter.Testcontainers
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.bind.DefaultValue
 
-@SpringBootTest(
-    properties = [
-        "spring.r2dbc.url=r2dbc:tc:postgresql:///twitch?TC_IMAGE_TAG=14-alpine",
-        "twitch.client-id=none",
-        "twitch.secret=none"
-    ]
+@ConfigurationProperties("twitch")
+data class TwitchProperties(
+    @DefaultValue("https://api.twitch.tv/helix/")
+    val baseUrl: String,
+    val clientId: String,
+    val secret: String,
+    @DefaultValue("https://id.twitch.tv/oauth2/token")
+    val authorizationUrl: String
 )
-@Testcontainers(disabledWithoutDocker = true)
-class ApplicationTests {
-
-    @Test
-    fun contextLoads() {
-    }
-
-}

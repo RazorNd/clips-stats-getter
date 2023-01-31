@@ -39,6 +39,8 @@ repositories {
 }
 
 extra["testcontainersVersion"] = "1.17.6"
+extra["springCloudVersion"] = "2022.0.1"
+extra["springMockk"] = "4.0.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -60,11 +62,14 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:r2dbc")
+    testImplementation("com.ninja-squad:springmockk:${property("springMockk")}")
+    testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock")
 }
 
 dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
     }
 }
 
