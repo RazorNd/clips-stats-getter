@@ -119,7 +119,7 @@ class TwitchClientTest {
         title = "babymetal",
         viewCount = 10,
         createdAt = Instant.parse("2017-11-30T22:34:18Z"),
-        duration = 60,
+        duration = 60.0,
         vodOffset = 480
     )
 

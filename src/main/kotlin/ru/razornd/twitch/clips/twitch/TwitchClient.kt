@@ -86,13 +86,13 @@ class TwitchClient(private val webClient: WebClient) {
         val id: String,
         val broadcasterId: String,
         val creatorId: String,
-        val videoId: String,
-        val gameId: String,
+        val videoId: String?,
+        val gameId: String?,
         val title: String,
         val viewCount: Int,
         val createdAt: Instant,
-        val duration: Int,
-        val vodOffset: Int
+        val duration: Double,
+        val vodOffset: Int?
     )
 
     private fun UriBuilder.queryParamIfNonNull(name: String, value: Any?) =
