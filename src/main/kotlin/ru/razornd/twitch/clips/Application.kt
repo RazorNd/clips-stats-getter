@@ -17,6 +17,8 @@
 
 package ru.razornd.twitch.clips
 
+import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -25,7 +27,11 @@ import org.springframework.boot.runApplication
 open class Application
 
 fun main(args: Array<String>) {
-    runApplication<Application>(*args) {
+    val context = runApplication<Application>(*args) {
         webApplicationType = WebApplicationType.NONE
+    }
+
+    runBlocking {
+        context.getBean<Runner>().run()
     }
 }

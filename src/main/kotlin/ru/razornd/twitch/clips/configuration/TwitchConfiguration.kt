@@ -21,11 +21,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
+import ru.razornd.twitch.clips.FetchConfiguration
 import ru.razornd.twitch.clips.twitch.*
 import ru.razornd.twitch.clips.twitch.AuthorizationManager.ClientAuthorization
 
 @Configuration
-@EnableConfigurationProperties(TwitchProperties::class)
+@EnableConfigurationProperties(value = [TwitchProperties::class, FetchConfiguration::class])
 open class TwitchConfiguration(private val properties: TwitchProperties) {
     @Bean
     open fun twitchClient(builder: WebClient.Builder, interceptor: AuthorizationInterceptor): TwitchClient {
