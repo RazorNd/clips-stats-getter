@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
 import org.springframework.r2dbc.core.DatabaseClient
 import org.testcontainers.junit.jupiter.Testcontainers
-import ru.razornd.twitch.clips.twitch.TwitchClient.ClipInformation
+import ru.razornd.twitch.clips.model.ClipInformation
 import java.time.Instant
 import java.time.LocalDateTime
 
@@ -54,10 +54,10 @@ class ClipInformationStoreTest {
     fun store() {
         val information = ClipInformation(
             "RandomClip1",
-            "1234",
-            "123456",
-            "6137",
-            "33103",
+            1234,
+            123456,
+            6137,
+            33103,
             "random1",
             10,
             Instant.parse("2017-11-30T22:34:18Z"),
@@ -76,10 +76,10 @@ class ClipInformationStoreTest {
             .describedAs("Stored data")
             .containsExactly(
                 entry("id", "RandomClip1"),
-                entry("broadcaster_id", "1234"),
-                entry("creator_id", "123456"),
-                entry("video_id", "6137"),
-                entry("game_id", "33103"),
+                entry("broadcaster_id", 1234L),
+                entry("creator_id", 123456L),
+                entry("video_id", 6137L),
+                entry("game_id", 33103L),
                 entry("title", "random1"),
                 entry("view_count", 10),
                 entry("created_at", LocalDateTime.parse("2017-11-30T22:34:18")),
@@ -92,8 +92,8 @@ class ClipInformationStoreTest {
     fun `store nullable`() {
         val information = ClipInformation(
             "5RUd3mpcosQvuTTRM",
-            "p8iRhwkjam02OtukBRGieN69",
-            "uMEssyLTruI86j",
+            392,
+            239,
             null,
             null,
             "Your brochure scenarios",
@@ -113,8 +113,8 @@ class ClipInformationStoreTest {
             .describedAs("Stored data")
             .containsExactly(
                 entry("id", "5RUd3mpcosQvuTTRM"),
-                entry("broadcaster_id", "p8iRhwkjam02OtukBRGieN69"),
-                entry("creator_id", "uMEssyLTruI86j"),
+                entry("broadcaster_id", 392L),
+                entry("creator_id", 239L),
                 entry("video_id", null),
                 entry("game_id", null),
                 entry("title", "Your brochure scenarios"),
@@ -131,10 +131,10 @@ class ClipInformationStoreTest {
 
         val information = ClipInformation(
             "YaqiRsjKQztbQr",
-            "V5c1Ibt7QU8PDcbRepWiaHWC",
-            "yjV7RIeqIhd",
-            "lRZpSAfBrURtfqK",
-            "NfV1i5yMXroX",
+            175967L,
+            6452L,
+            3427L,
+            9740469L,
             "handmade",
             50,
             Instant.parse("2022-08-12T09:37:05Z"),
@@ -152,10 +152,10 @@ class ClipInformationStoreTest {
             .describedAs("Stored data")
             .containsExactly(
                 entry("id", "YaqiRsjKQztbQr"),
-                entry("broadcaster_id", "V5c1Ibt7QU8PDcbRepWiaHWC"),
-                entry("creator_id", "yjV7RIeqIhd"),
-                entry("video_id", "lRZpSAfBrURtfqK"),
-                entry("game_id", "NfV1i5yMXroX"),
+                entry("broadcaster_id", 175967L),
+                entry("creator_id", 6452L),
+                entry("video_id", 3427L),
+                entry("game_id", 9740469L),
                 entry("title", "handmade"),
                 entry("view_count", 50),
                 entry("created_at", LocalDateTime.parse("2022-08-12T09:37:05")),
@@ -165,7 +165,7 @@ class ClipInformationStoreTest {
     }
 
     private fun insertNullableClip() {
-        databaseClient.sql("INSERT INTO clips VALUES ('YaqiRsjKQztbQr', 'V5c1Ibt7QU8PDcbRepWiaHWC', 'yjV7RIeqIhd', NULL, NULL, 'handmade', 50, '2022-08-12T09:37:05'::TIMESTAMP, 711, NULL)")
+        databaseClient.sql("INSERT INTO clips VALUES ('YaqiRsjKQztbQr', 175967, 6452, NULL, NULL, 'handmade', 50, '2022-08-12T09:37:05'::TIMESTAMP, 711, NULL)")
             .then().block()
     }
 

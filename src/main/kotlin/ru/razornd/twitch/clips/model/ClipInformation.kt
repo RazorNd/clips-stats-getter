@@ -15,16 +15,22 @@
  *
  */
 
-CREATE TABLE clips
-(
-    id             VARCHAR(255)  NOT NULL UNIQUE PRIMARY KEY,
-    broadcaster_id BIGINT        NOT NULL,
-    creator_id     BIGINT        NOT NULL,
-    video_id       BIGINT,
-    game_id        BIGINT,
-    title          VARCHAR(2048) NOT NULL,
-    view_count     INTEGER       NOT NULL,
-    created_at     TIMESTAMP     NOT NULL,
-    duration       FLOAT         NOT NULL,
-    vod_offset     INTEGER
-);
+package ru.razornd.twitch.clips.model
+
+import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy
+import com.fasterxml.jackson.databind.annotation.JsonNaming
+import java.time.Instant
+
+@JsonNaming(SnakeCaseStrategy::class)
+data class ClipInformation(
+    val id: String,
+    val broadcasterId: Long,
+    val creatorId: Long,
+    val videoId: Long?,
+    val gameId: Long?,
+    val title: String,
+    val viewCount: Int,
+    val createdAt: Instant,
+    val duration: Double,
+    val vodOffset: Int?
+)

@@ -20,6 +20,7 @@ package ru.razornd.twitch.clips.twitch
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
@@ -30,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import ru.razornd.twitch.clips.configuration.TwitchConfiguration
-import ru.razornd.twitch.clips.twitch.TwitchClient.ClipInformation
+import ru.razornd.twitch.clips.model.ClipInformation
 import java.time.Instant
 
 // language=JSON
@@ -105,17 +106,17 @@ class TwitchClientTest {
 
     private val token = "5tsILNIEUJ95jZq21ISf"
 
-    private val broadcasterId = "5504256d-e8cd-4cb1-83ad-1cff2216b320"
+    private val broadcasterId = 978344L
 
     @Autowired
     lateinit var client: TwitchClient
 
     private val clipInformation = ClipInformation(
         id = "AwkwardHelplessSalamanderSwiftRage",
-        broadcasterId = "67955580",
-        creatorId = "53834192",
-        videoId = "205586603",
-        gameId = "488191",
+        broadcasterId = 67955580,
+        creatorId = 53834192,
+        videoId = 205586603,
+        gameId = 488191,
         title = "babymetal",
         viewCount = 10,
         createdAt = Instant.parse("2017-11-30T22:34:18Z"),
@@ -213,4 +214,6 @@ class TwitchClientTest {
                 .withQueryParam("started_at", equalTo(startedAt.toString()))
         )
     }
+
+    private fun equalTo(@Suppress("SameParameterValue") value: Long): StringValuePattern = equalTo(value.toString())
 }

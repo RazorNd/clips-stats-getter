@@ -18,7 +18,6 @@
 package ru.razornd.twitch.clips.twitch
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy
-import com.fasterxml.jackson.databind.annotation.JsonNaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
@@ -27,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.util.UriBuilder
 import ru.razornd.twitch.clips.logger
+import ru.razornd.twitch.clips.model.ClipInformation
 import java.net.URI
 import java.time.Instant
 
@@ -41,7 +41,7 @@ class TwitchClient(private val webClient: WebClient) {
         classes = [Response::class, Pagination::class, ClipInformation::class, SnakeCaseStrategy::class]
     )
     fun getClips(
-        broadcasterId: String,
+        broadcasterId: Long,
         startedAt: Instant? = null,
         endedAt: Instant? = null
     ): Flow<ClipInformation> = flow {
@@ -80,20 +80,6 @@ class TwitchClient(private val webClient: WebClient) {
     private data class Response<T>(val data: Collection<T>, val pagination: Pagination?)
 
     private data class Pagination(val cursor: String?)
-
-    @JsonNaming(SnakeCaseStrategy::class)
-    data class ClipInformation(
-        val id: String,
-        val broadcasterId: String,
-        val creatorId: String,
-        val videoId: String?,
-        val gameId: String?,
-        val title: String,
-        val viewCount: Int,
-        val createdAt: Instant,
-        val duration: Double,
-        val vodOffset: Int?
-    )
 
     private fun UriBuilder.queryParamIfNonNull(name: String, value: Any?) =
         if (value != null) queryParam(name, value) else this

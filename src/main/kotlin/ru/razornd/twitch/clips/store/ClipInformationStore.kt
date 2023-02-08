@@ -20,8 +20,8 @@ package ru.razornd.twitch.clips.store
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.DatabaseClient.GenericExecuteSpec
-import org.springframework.stereotype.Repository
-import ru.razornd.twitch.clips.twitch.TwitchClient.ClipInformation
+import org.springframework.stereotype.Component
+import ru.razornd.twitch.clips.model.ClipInformation
 
 private const val INSERT_STRING =
     """
@@ -52,14 +52,14 @@ ON CONFLICT (id) DO UPDATE
         vod_offset=:vodOffset
 """
 
-@Repository
+@Component
 class ClipInformationStore(private val databaseClient: DatabaseClient) {
     suspend fun store(clipInformation: ClipInformation) {
         databaseClient.sql(INSERT_STRING)
             .bind("id", clipInformation.id)
             .bind("broadcasterId", clipInformation.broadcasterId)
             .bind("creatorId", clipInformation.creatorId)
-            .bind("videoId", clipInformation.videoId.takeIf { it != "" })
+            .bind("videoId", clipInformation.videoId)
             .bind("gameId", clipInformation.gameId)
             .bind("title", clipInformation.title)
             .bind("viewCount", clipInformation.viewCount)
