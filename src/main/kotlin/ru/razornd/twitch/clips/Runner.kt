@@ -17,6 +17,7 @@
 
 package ru.razornd.twitch.clips
 
+import kotlinx.coroutines.flow.collectIndexed
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.stereotype.Component
@@ -25,6 +26,9 @@ import ru.razornd.twitch.clips.twitch.TwitchClient
 import java.time.Clock
 import java.time.Instant
 import java.time.Period
+
+
+private val log = logger<Runner>()
 
 @ConfigurationProperties("fetch")
 data class FetchConfiguration(val broadcasterId: Long, @DefaultValue("1w") val period: Period)
@@ -41,9 +45,21 @@ class Runner(
     suspend fun run() {
         val endDate = Instant.now(clock)
 
-        val clips = client.getClips(configuration.broadcasterId, endDate.minus(configuration.period), endDate)
+        val startedAt = endDate.minus(configuration.period)
+        val clips = client.getClips(configuration.broadcasterId, startedAt, endDate)
 
-        clips.collect { store.store(it) }
+        log.info(
+            "Start collect Clip Information for broadcasterId: {}, from: {}, to: {}",
+            configuration.broadcasterId,
+            startedAt,
+            endDate
+        )
+        clips.collectIndexed { i, clip ->
+            if (i != 0 && i % 100 == 0) {
+                log.info("Fetched {} clips. Date: {}", i, clip.createdAt)
+            }
+            store.store(clip)
+        }
     }
 
 }
