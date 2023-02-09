@@ -25,7 +25,8 @@ import org.testcontainers.junit.jupiter.Testcontainers
     properties = [
         "spring.r2dbc.url=r2dbc:tc:postgresql:///twitch?TC_IMAGE_TAG=14-alpine",
         "twitch.client-id=none",
-        "twitch.secret=none"
+        "twitch.secret=none",
+        "fetch.broadcaster-id=42"
     ]
 )
 @Testcontainers(disabledWithoutDocker = true)

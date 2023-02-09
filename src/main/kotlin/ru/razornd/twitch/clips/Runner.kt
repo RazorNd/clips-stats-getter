@@ -19,7 +19,9 @@ package ru.razornd.twitch.clips
 
 import kotlinx.coroutines.flow.collectIndexed
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.context.properties.bind.DefaultValue
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import ru.razornd.twitch.clips.store.ClipInformationStore
 import ru.razornd.twitch.clips.twitch.TwitchClient
@@ -29,6 +31,10 @@ import java.time.Period
 
 
 private val log = logger<Runner>()
+
+@Configuration
+@EnableConfigurationProperties(FetchConfiguration::class)
+open class RunnerConfiguration
 
 @ConfigurationProperties("fetch")
 data class FetchConfiguration(val broadcasterId: Long, @DefaultValue("1w") val period: Period)
