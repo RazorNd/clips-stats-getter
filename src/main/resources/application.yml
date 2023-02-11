@@ -1,3 +1,13 @@
 spring:
   application:
     name: clips-stats-getter
+---
+spring:
+  config:
+    activate:
+      on-cloud-platform: kubernetes
+  main:
+    banner-mode: off
+
+logging:
+  config: classpath:logback-kubernetes.xml

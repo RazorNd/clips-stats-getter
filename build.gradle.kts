@@ -41,6 +41,7 @@ repositories {
 extra["testcontainersVersion"] = "1.17.6"
 extra["springCloudVersion"] = "2022.0.1"
 extra["springMockk"] = "4.0.0"
+extra["logbackContrib"] = "0.1.5"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -53,6 +54,10 @@ dependencies {
 
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.postgresql:r2dbc-postgresql")
+
+
+    runtimeOnly("ch.qos.logback.contrib:logback-json-classic:${property("logbackContrib")}")
+    runtimeOnly("ch.qos.logback.contrib:logback-jackson:${property("logbackContrib")}")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
