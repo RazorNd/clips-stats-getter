@@ -17,6 +17,7 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.aot.ProcessAot
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
     id("org.springframework.boot") version "3.0.2"
@@ -26,7 +27,7 @@ plugins {
 }
 
 group = "ru.razornd.twitch"
-version = "0.0.1-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -92,4 +93,24 @@ tasks.withType<Test> {
 
 tasks.withType<ProcessAot> {
     jvmArgs("-Dspring.main.cloud-platform=kubernetes")
+}
+
+tasks.withType<BootBuildImage> {
+
+    val registryUrl: String? by project
+    val registryUsername: String? by project
+    val registryPassword: String? by project
+
+    val domain = registryUrl?.let { "$it/" } ?: ""
+    val userPath = registryUsername?.toLowerCase()?.let { "$it/" } ?: ""
+
+    imageName.set("$domain$userPath${project.name}:${project.version}")
+
+    docker {
+        publishRegistry {
+            url.set(registryUrl)
+            username.set(registryUsername)
+            password.set(registryPassword)
+        }
+    }
 }

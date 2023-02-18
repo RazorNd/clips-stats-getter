@@ -2,11 +2,10 @@ name: Build project
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'master', 'ci-test' ]
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: razornd/clips-stats-getter
 
 permissions:
   contents: read
@@ -36,27 +35,5 @@ jobs:
         with:
           name: jar
           path: build/libs/clips-stats-getter-*.jar
-
-  push-image:
-    runs-on: ubuntu-latest
-    needs: [ build ]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '19'
-          distribution: 'liberica'
-          cache: gradle
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Image
-        run: ./gradlew bootBuildImage --imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: Publish Image
-        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
+        run: ./gradlew bootBuildImage --publishImage -PregistryUrl=${{ env.REGISTRY }} -PregistryUsername=${{ github.actor }} -PregistryPassword=${{ secrets.GITHUB_TOKEN }}
