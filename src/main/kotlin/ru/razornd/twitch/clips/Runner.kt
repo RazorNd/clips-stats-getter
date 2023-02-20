@@ -66,6 +66,7 @@ class Runner(
             }
             store.store(clip)
         }
+        log.info("Finish collection Clip Information")
     }
 
 }
