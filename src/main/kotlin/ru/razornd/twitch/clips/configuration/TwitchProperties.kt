@@ -24,8 +24,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 data class TwitchProperties(
     @DefaultValue("https://api.twitch.tv/helix/")
     val baseUrl: String,
-    val clientId: String,
-    val secret: String,
+    val clientId: String?,
+    val secret: String?,
     @DefaultValue("https://id.twitch.tv/oauth2/token")
     val authorizationUrl: String
 )

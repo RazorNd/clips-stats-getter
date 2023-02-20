@@ -17,6 +17,8 @@
 
 package ru.razornd.twitch.clips.configuration
 
+import org.springframework.beans.factory.ObjectProvider
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,32 +30,44 @@ import ru.razornd.twitch.clips.twitch.AuthorizationManager.ClientAuthorization
 @EnableConfigurationProperties(TwitchProperties::class)
 open class TwitchConfiguration(private val properties: TwitchProperties) {
     @Bean
-    open fun twitchClient(builder: WebClient.Builder, interceptor: AuthorizationInterceptor): TwitchClient {
+    open fun twitchClient(
+        builder: WebClient.Builder,
+        interceptor: ObjectProvider<AuthorizationInterceptor>
+    ): TwitchClient {
         val webClient = builder.baseUrl(properties.baseUrl)
-            .filter(interceptor)
+            .filters { interceptor.ifUnique(it::add) }
             .build()
         return TwitchClient(webClient)
     }
 
-    @Bean
-    open fun authorizationClient(builder: WebClient.Builder): AuthorizationClient {
-        val webClient = builder.baseUrl(properties.authorizationUrl).build()
+    @Configuration
+    @ConditionalOnProperty(prefix = "twitch", name = ["client-id", "secret"])
+    open inner class AuthorizationConfiguration {
 
-        return AuthorizationClient(webClient)
+        @Bean
+        open fun authorizationClient(builder: WebClient.Builder): AuthorizationClient {
+            val webClient = builder.baseUrl(properties.authorizationUrl).build()
+
+            return AuthorizationClient(webClient)
+        }
+
+        @Bean
+        open fun tokenStore() = SimpleTokenStore()
+
+        @Bean
+        open fun authorizationManager(
+            authorizationClient: AuthorizationClient,
+            tokenStore: TokenStore,
+        ): AuthorizationManager = AuthorizationManager(properties.clientAuthorization, authorizationClient, tokenStore)
+
+        @Bean
+        open fun authorizationInterceptor(authorizationManager: AuthorizationManager) =
+            AuthorizationInterceptor(authorizationManager)
+
+        private val TwitchProperties.clientAuthorization
+            get() = ClientAuthorization(
+                requireNotNull(clientId) { "twitch.clientId is required if authorization configured" },
+                requireNotNull(secret) { "twitch.secret is required if authorization configured" }
+            )
     }
-
-    @Bean
-    open fun tokenStore() = SimpleTokenStore()
-
-    @Bean
-    open fun authorizationManager(
-        authorizationClient: AuthorizationClient,
-        tokenStore: TokenStore,
-    ): AuthorizationManager = AuthorizationManager(properties.clientAuthorization, authorizationClient, tokenStore)
-
-    @Bean
-    open fun authorizationInterceptor(authorizationManager: AuthorizationManager) =
-        AuthorizationInterceptor(authorizationManager)
-
-    private val TwitchProperties.clientAuthorization get() = ClientAuthorization(clientId, secret)
 }
