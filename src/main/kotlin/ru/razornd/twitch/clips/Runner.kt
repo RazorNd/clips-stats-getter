@@ -49,6 +49,14 @@ class Runner(
     var clock: Clock = Clock.systemUTC()
 
     suspend fun run() {
+        try {
+            doRun()
+        } catch (e: Exception) {
+            log.error("Exception while running.", e)
+        }
+    }
+
+    private suspend fun doRun() {
         val endDate = Instant.now(clock)
 
         val startedAt = endDate.minus(configuration.period)
