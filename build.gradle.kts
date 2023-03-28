@@ -20,10 +20,11 @@ import org.springframework.boot.gradle.tasks.aot.ProcessAot
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
-    id("org.springframework.boot") version "3.0.2"
+    id("org.springframework.boot") version "3.0.5"
     id("io.spring.dependency-management") version "1.1.0"
-    id("org.graalvm.buildtools.native") version "0.9.18"
-    kotlin("jvm") version "1.8.0"
+    id("org.graalvm.buildtools.native") version "0.9.20"
+    kotlin("jvm") version "1.8.10"
+    kotlin("kapt") version "1.8.10"
 }
 
 group = "ru.razornd.twitch"
@@ -42,7 +43,7 @@ repositories {
 
 extra["testcontainersVersion"] = "1.17.6"
 extra["springCloudVersion"] = "2022.0.1"
-extra["springMockk"] = "4.0.0"
+extra["springMockk"] = "4.0.2"
 extra["logbackContrib"] = "0.1.5"
 
 dependencies {
@@ -62,6 +63,7 @@ dependencies {
     runtimeOnly("ch.qos.logback.contrib:logback-jackson:${property("logbackContrib")}")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
