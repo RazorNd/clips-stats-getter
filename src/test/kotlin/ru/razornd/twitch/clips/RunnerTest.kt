@@ -22,6 +22,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import ru.razornd.twitch.clips.model.ClipInformation
 import ru.razornd.twitch.clips.store.ClipInformationStore
@@ -37,7 +38,7 @@ class RunnerTest {
 
     private val client: TwitchClient = mockk()
     private val store: ClipInformationStore = mockk(relaxUnitFun = true)
-    private val configuration = FetchConfiguration(3593082L, Period.ofDays(3))
+    private val configuration = FetchConfiguration(listOf(3593082L, 790564L, 11772L), Period.ofDays(3))
 
     private val runner = Runner(client, store, configuration)
 
@@ -47,24 +48,15 @@ class RunnerTest {
 
     @Test
     fun run() {
-        val clipInformation = ClipInformation(
-            "Ym5ZxPNFWDAX7JUO2ruPPTJ4",
-            175L,
-            9043719L,
-            657L,
-            83606L,
-            "convertible",
-            296914,
-            Instant.parse("2023-02-08T17:00:00Z"),
-            90.0,
-            9741750
-        )
+        val clipInformation = createClipInformation()
+
+        val broadcastersIds = mutableListOf<Long>()
 
         every {
             client.getClips(
-                configuration.broadcasterId,
-                now.minus(configuration.period),
-                now
+                capture(broadcastersIds),
+                eq(now.minus(configuration.period)),
+                eq(now)
             )
         } returns listOf(clipInformation).asFlow()
 
@@ -74,5 +66,21 @@ class RunnerTest {
         }
 
         coVerify { store.store(clipInformation) }
+        assertThat(broadcastersIds)
+            .describedAs("Broadcaster IDs that passed to Twitch Client")
+            .isEqualTo(configuration.broadcastersIds)
     }
+
+    private fun createClipInformation() = ClipInformation(
+        "Ym5ZxPNFWDAX7JUO2ruPPTJ4",
+        175L,
+        9043719L,
+        657L,
+        83606L,
+        "convertible",
+        296914,
+        Instant.parse("2023-02-08T17:00:00Z"),
+        90.0,
+        9741750
+    )
 }

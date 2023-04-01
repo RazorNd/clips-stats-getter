@@ -1,6 +1,9 @@
 spring:
   application:
     name: clips-stats-getter
+
+fetch:
+  broadcasters-ids: ${fetch.broadcaster-id}
 ---
 spring:
   config:

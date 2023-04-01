@@ -17,7 +17,11 @@
 
 package ru.razornd.twitch.clips
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.context.properties.bind.DefaultValue
@@ -37,7 +41,7 @@ private val log = logger<Runner>()
 open class RunnerConfiguration
 
 @ConfigurationProperties("fetch")
-data class FetchConfiguration(val broadcasterId: Long, @DefaultValue("1w") val period: Period)
+data class FetchConfiguration(val broadcastersIds: Collection<Long>, @DefaultValue("1w") val period: Period)
 
 @Component
 class Runner(
@@ -60,21 +64,29 @@ class Runner(
         val endDate = Instant.now(clock)
 
         val startedAt = endDate.minus(configuration.period)
-        val clips = client.getClips(configuration.broadcasterId, startedAt, endDate)
 
+        coroutineScope {
+            configuration.broadcastersIds.map { broadcasterId ->
+                launch(Dispatchers.IO) { fetchClips(broadcasterId, startedAt, endDate) }
+            }.joinAll()
+        }
+    }
+
+    private suspend fun fetchClips(broadcasterId: Long, startedAt: Instant, endDate: Instant) {
+        val clips = client.getClips(broadcasterId, startedAt, endDate)
         log.info(
             "Start collect Clip Information for broadcasterId: {}, from: {}, to: {}",
-            configuration.broadcasterId,
+            broadcasterId,
             startedAt,
             endDate
         )
         clips.collectIndexed { i, clip ->
             if (i != 0 && i % 100 == 0) {
-                log.info("Fetched {} clips. Date: {}", i, clip.createdAt)
+                log.info("Fetched {} clips for broadcasterId: {}. Date: {}", i, broadcasterId, clip.createdAt)
             }
             store.store(clip)
         }
-        log.info("Finish collection Clip Information")
+        log.info("Finish collection Clip Information for broadcasterId: {}", broadcasterId)
     }
 
 }
